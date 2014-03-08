@@ -1264,6 +1264,55 @@ void World::LoadConfigSettings(bool reload)
 
     m_int_configs[CONFIG_BIRTHDAY_TIME] = sConfigMgr->GetIntDefault("BirthdayTime", 1222964635);
 
+    // Individual XP/loot rates
+    int sec = ConfigMgr::GetIntDefault("Player.XpRateSecurity", 0);
+    if (sec < SEC_PLAYER || sec > SEC_ADMINISTRATOR)
+    {
+		sLog->outError(LOG_FILTER_SERVER_LOADING, "Player.XpRateSecurity has invalid security `%i`, must be between `%i and `%i`, defaulting to 0 ...",
+		sec, SEC_PLAYER, SEC_ADMINISTRATOR);
+		m_int_configs[CONFIG_PLAYER_INDIVIDUAL_XP_RATE_SECURITY] = 0;
+    }
+    else
+    {
+    	m_int_configs[CONFIG_PLAYER_INDIVIDUAL_XP_RATE_SECURITY] = sec;
+    }
+    sec = ConfigMgr::GetIntDefault("Player.LootRateSecurity", 0);
+    if (sec < SEC_PLAYER || sec > SEC_ADMINISTRATOR)
+    {
+    	sLog->outError(LOG_FILTER_SERVER_LOADING, "Player.LootRateSecurity has invalid security `%i`, must be between `%i and `%i`, defaulting to 0 ...",
+    			sec, SEC_PLAYER, SEC_ADMINISTRATOR);
+    	m_int_configs[CONFIG_PLAYER_INDIVIDUAL_LOOT_RATE_SECURITY] = 0;
+    }
+    else
+    {
+    	m_int_configs[CONFIG_PLAYER_INDIVIDUAL_LOOT_RATE_SECURITY] = sec;
+    }
+
+    int maxXpRate = ConfigMgr::GetIntDefault("Player.MaximumXpRate", 1);
+    if (maxXpRate < 1)
+    {
+    	sLog->outError(LOG_FILTER_SERVER_LOADING, "Player.MaximumXpRate has too low value `%i`, defaulting to 1 ...", maxXpRate);
+    	m_int_configs[CONFIG_PLAYER_MAXIMUM_INDIVIDUAL_XP_RATE] = 1;
+    }
+    else
+    {
+    	m_int_configs[CONFIG_PLAYER_MAXIMUM_INDIVIDUAL_XP_RATE] = maxXpRate;
+    }
+
+    maxXpRate = ConfigMgr::GetIntDefault("Player.MaximumLootRate", 1);
+    if (maxXpRate < 1)
+    {
+    	sLog->outError(LOG_FILTER_SERVER_LOADING, "Player.MaximumLootRate has too low value `%i`, defaulting to 1 ...", maxXpRate);
+    	m_int_configs[CONFIG_PLAYER_MAXIMUM_INDIVIDUAL_LOOT_RATE] = 1;
+    }
+    else
+    {
+    	m_int_configs[CONFIG_PLAYER_MAXIMUM_INDIVIDUAL_LOOT_RATE] = maxXpRate;
+    }
+
+    m_bool_configs[CONFIG_PLAYER_INDIVIDUAL_XP_RATE_SHOW_ON_LOGIN] = ConfigMgr::GetBoolDefault("Player.ShowXpRateOnLogin", true);
+    m_bool_configs[CONFIG_PLAYER_INDIVIDUAL_LOOT_RATE_SHOW_ON_LOGIN] = ConfigMgr::GetBoolDefault("Player.ShowLootRateOnLogin", true);
+
     // call ScriptMgr if we're reloading the configuration
     if (reload)
         sScriptMgr->OnConfigLoad(reload);
